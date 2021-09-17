@@ -17,7 +17,7 @@ while 1:
     rrdtool.update('traficoRED.rrd', valor)
     rrdtool.dump('traficoRED.rrd','traficoRED.xml')
     time.sleep(1)
-
+    
 if ret:
     print (rrdtool.error())
     time.sleep(300)
