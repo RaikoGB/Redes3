@@ -1,16 +1,17 @@
 from datetime import date
-import os
+from reportlab.pdfgen import *
 from pysnmp.hlapi import *
+import os
 import rrdtool
 Agentescc=0
 Agentes=[]
 
 class Agente:
-    ver=1
-    comunidad="ComunidadR3"
-    puerto=161 
-    def __init__(self, ip):
+    def __init__(self, ip, ver, comunidad, puerto):
          self.ip=ip
+         self.ver=ver
+         self.comunidad=comunidad
+         self.puerto=puerto
 
 def menu():
     print(30*"-","Menu", 30*"-")
@@ -24,7 +25,7 @@ def menu():
 
 def monitor():
     print(30*"-","Monitor de Dispositivos", 30*"-")
-    print("Agentes Monitorizados: ", Agentescc)
+    print("Agentes Monitorizados: ", len(Agentes))
     print(30*"*","Estado de conexion de los agentes", 30*"*")
     i=0
     while i<=Agentescc:
@@ -56,18 +57,16 @@ def Calculo():
     print("El bloque es :", Resultado)
     pass
 
-class Agente:
-    ver=1
-    comunidad="ComunidadR3"
-    puerto=161 
-    def __init__(self, ip):
-         self.ip=ip
-
 def AgregarD():
+    #windows ip :192.168.1.65
+    #linux ip: 192.168.1.70
     print(30*"-","Agregar un nuevo Agente", 30*"-")
     while True:        
         IP =input("Ingresa la IP del nuevo Agente: ")
-        Agentes.append(Agentescc=Agente(IP))
+        Ver =input("Ingresa la Version del nuevo Agente:")
+        Comunidad =input("Ingresa la Comunidad del nuevo Agente:")
+        Puerto =input("Ingresa el puerto del nuevo Agente:")
+        Agentes.append(Agente(IP,Ver,Comunidad,Puerto))
         Agentescc+1
         op = input("agregar Mas? (s/n): ")
         if op=="n" or op=="N":
@@ -84,6 +83,8 @@ def BorrarD():
         break
         
 def GenerarPDF():
+    arch=canvas.Canvas("Reporte.pdf")
+    arch.save()
     pass
 
 def CreateRRD():
