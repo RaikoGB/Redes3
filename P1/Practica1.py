@@ -1,7 +1,6 @@
 from datetime import date
 from reportlab.pdfgen import *
 from pysnmp.hlapi import *
-from getSNMP import consultaSNMP
 import threading
 import os
 import rrdtool
