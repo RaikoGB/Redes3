@@ -23,15 +23,15 @@ def UpdateRRD():
             break
         for i in Agente:
             #paquetes de la intefaz
-            Con1= consultaSNMP(Agente[i].comunidad,Agente[i].ip,"1.3.6.1.2.1.2.2.1.11.19")
+            Con1= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.2.2.1.11.19")
             #Recibidos IPv4
-            Con2= consultaSNMP(Agente[i].comunidad,Agente[i].ip,"1.3.6.1.2.1.4.3.0")
+            Con2= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.4.3.0")
             #ICMP echoes
-            Con3= consultaSNMP(Agente[i].comunidad,Agente[i].ip,"1.3.6.1.2.1.5.21.0")
+            Con3= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.5.21.0")
             #Segmentos Recibidos
-            Con4= consultaSNMP(Agente[i].comunidad,Agente[i].ip,"1.3.6.1.2.1.6.10.0")
+            Con4= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.6.10.0")
             #Datagramas Entregados UDP
-            Con5= consultaSNMP(Agente[i].comunidad,Agente[i].ip,"1.3.6.1.2.1.7.1.0")
+            Con5= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.7.1.0")
             valor= "N:"+str(Con1)+":"+str(Con2)+":"+str(Con3)+":"+str(Con4)+":"+str(Con5)
             #print (valor)
             rrdtool.update('traficoRED.rrd', valor)
@@ -56,39 +56,38 @@ def monitor():
     print(30*"*","Estado de conexion de los agentes", 30*"*")
     for i in Agentes:
         try:
-            result = netsnmp.snmpwalk("1.3.6.1.2.1.1.1",
-                                      Agente[i].ver,
-                                      Agente[i].ip,
-                                      Agente[i].comunidad)
+            result = consultaSNMP(i.comunidad,
+                         i.ip,
+                         "1.3.6.1.2.1.1.1")
         except:
-            print("El agente: ", Agente[i].ip ,", no se pudo conectar")
+            print("El agente: ", i.ip ,", no se pudo conectar")
         else: 
-            print("El agente: ", Agente[i].ip ," , Esta conectado") 
+            print("El agente: ", i.ip ," , Esta conectado") 
     print(30*"*","interfaces de Red de los agentes", 30*"*")
     for i in Agentes:
-        R = consultaSNMP(Agente[i].comunidad,
-                         Agente[i].ip,
+        R = consultaSNMP(i.comunidad,
+                         i.ip,
                          "1.3.6.1.2.1.2.1")
-        print(30*"=""El agente : ", Agente[i].ip, ", tiene ", R, " Interfaces", 30*"=")
+        print(30*"=""El agente : ", i.ip, ", tiene ", R, " Interfaces", 30*"=")
     #Consulta y guarda la descripcion de las interfaces
     print(30*"*","Estado y descripcion de interfaces", 30*"*")
     for i in Agentes:
-        R2=consultaSNMP(Agente[i].comunidad,
-                         Agente[i].ip,
+        R2=consultaSNMP(i.comunidad,
+                         i.ip,
                          "1.3.6.1.2.1.2.2.1.2")
         for varBindTableRow in R2:
-            for name, val in varBindTableRow:
+            for val in varBindTableRow:
                 if 'Null' in val:  # Remove Null interface
                     continue
                 else:
                     int_name.append(val)
     #Consulta y guarda el estado de las interfaces
         admin=''
-        R3 = consultaSNMP(Agente[i].comunidad,
-                         Agente[i].ip,
+        R3 = consultaSNMP(i.comunidad,
+                         i.ip,
                          "1.3.6.1.2.1.2.2.1.7")
         for varBindTableRow in R3:
-            for name, val in varBindTableRow:
+            for val in varBindTableRow:
                 admin_raw=val.prettyPrint()
                 if '1' in admin_raw:
                     admin = 'UP'
@@ -98,7 +97,7 @@ def monitor():
                     admin = 'TESTING'
                 int_status.append(admin)
         for j in range(len(int_name)):
-            print("{}\t {}\t {}".format(Agente[i].ip,int_name[j],int_status[j]))
+            print("{}\t {}\t {}".format(i.ip,int_name[j],int_status[j]))
             
 def Calculo():
     print(30*"-","Obtener bloque de ejercicios.", 30*"-")
