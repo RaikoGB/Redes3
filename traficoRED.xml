@@ -4,7 +4,7 @@
 <rrd>
 	<version>0003</version>
 	<step>30</step> <!-- Seconds -->
-	<lastupdate>1631907546</lastupdate> <!-- 2021-09-17 14:39:06 CDT -->
+	<lastupdate>1632070497</lastupdate> <!-- 2021-09-19 11:54:57 CDT -->
 
 	<ds>
 		<name> inoctets </name>
@@ -14,8 +14,8 @@
 		<max>NaN</max>
 
 		<!-- PDP Status -->
-		<last_ds>27464945</last_ds>
-		<value>2.5579678264e+02</value>
+		<last_ds>0</last_ds>
+		<value>0.0000000000e+00</value>
 		<unknown_sec> 0 </unknown_sec>
 	</ds>
 
@@ -27,8 +27,8 @@
 		<max>NaN</max>
 
 		<!-- PDP Status -->
-		<last_ds>1110699</last_ds>
-		<value>6.0000000000e+01</value>
+		<last_ds>0</last_ds>
+		<value>0.0000000000e+00</value>
 		<unknown_sec> 0 </unknown_sec>
 	</ds>
 
@@ -42,24 +42,24 @@
 		</params>
 		<cdp_prep>
 			<ds>
-			<primary_value>5.6466836014e+02</primary_value>
-			<secondary_value>5.5459500567e+02</secondary_value>
+			<primary_value>NaN</primary_value>
+			<secondary_value>0.0000000000e+00</secondary_value>
 			<value>0.0000000000e+00</value>
 			<unknown_datapoints>0</unknown_datapoints>
 			</ds>
 			<ds>
-			<primary_value>3.9885000000e+02</primary_value>
-			<secondary_value>3.1560000000e+02</secondary_value>
+			<primary_value>NaN</primary_value>
+			<secondary_value>0.0000000000e+00</secondary_value>
 			<value>0.0000000000e+00</value>
 			<unknown_datapoints>0</unknown_datapoints>
 			</ds>
 		</cdp_prep>
 		<database>
-			<!-- 2021-09-17 14:27:00 CDT / 1631906820 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:30:00 CDT / 1631907000 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:33:00 CDT / 1631907180 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:36:00 CDT / 1631907360 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:39:00 CDT / 1631907540 --> <row><v>5.6466836014e+02</v><v>3.9885000000e+02</v></row>
+			<!-- 2021-09-19 11:42:00 CDT / 1632069720 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:45:00 CDT / 1632069900 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:48:00 CDT / 1632070080 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:51:00 CDT / 1632070260 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:54:00 CDT / 1632070440 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
 		</database>
 	</rra>
 	<rra>
@@ -71,39 +71,39 @@
 		</params>
 		<cdp_prep>
 			<ds>
-			<primary_value>5.5459500567e+02</primary_value>
+			<primary_value>0.0000000000e+00</primary_value>
 			<secondary_value>0.0000000000e+00</secondary_value>
 			<value>NaN</value>
 			<unknown_datapoints>0</unknown_datapoints>
 			</ds>
 			<ds>
-			<primary_value>3.1560000000e+02</primary_value>
+			<primary_value>0.0000000000e+00</primary_value>
 			<secondary_value>0.0000000000e+00</secondary_value>
 			<value>NaN</value>
 			<unknown_datapoints>0</unknown_datapoints>
 			</ds>
 		</cdp_prep>
 		<database>
-			<!-- 2021-09-17 14:29:30 CDT / 1631906970 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:30:00 CDT / 1631907000 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:30:30 CDT / 1631907030 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:31:00 CDT / 1631907060 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:31:30 CDT / 1631907090 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:32:00 CDT / 1631907120 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:32:30 CDT / 1631907150 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:33:00 CDT / 1631907180 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:33:30 CDT / 1631907210 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:34:00 CDT / 1631907240 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:34:30 CDT / 1631907270 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:35:00 CDT / 1631907300 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:35:30 CDT / 1631907330 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:36:00 CDT / 1631907360 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:36:30 CDT / 1631907390 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:37:00 CDT / 1631907420 --> <row><v>NaN</v><v>NaN</v></row>
-			<!-- 2021-09-17 14:37:30 CDT / 1631907450 --> <row><v>5.4929765532e+02</v><v>3.4613312626e+02</v></row>
-			<!-- 2021-09-17 14:38:00 CDT / 1631907480 --> <row><v>5.8396962404e+02</v><v>3.8006687374e+02</v></row>
-			<!-- 2021-09-17 14:38:30 CDT / 1631907510 --> <row><v>5.7081115555e+02</v><v>5.5360000000e+02</v></row>
-			<!-- 2021-09-17 14:39:00 CDT / 1631907540 --> <row><v>5.5459500567e+02</v><v>3.1560000000e+02</v></row>
+			<!-- 2021-09-19 11:45:00 CDT / 1632069900 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:45:30 CDT / 1632069930 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:46:00 CDT / 1632069960 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:46:30 CDT / 1632069990 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:47:00 CDT / 1632070020 --> <row><v>NaN</v><v>NaN</v></row>
+			<!-- 2021-09-19 11:47:30 CDT / 1632070050 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:48:00 CDT / 1632070080 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:48:30 CDT / 1632070110 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:49:00 CDT / 1632070140 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:49:30 CDT / 1632070170 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:50:00 CDT / 1632070200 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:50:30 CDT / 1632070230 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:51:00 CDT / 1632070260 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:51:30 CDT / 1632070290 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:52:00 CDT / 1632070320 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:52:30 CDT / 1632070350 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:53:00 CDT / 1632070380 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:53:30 CDT / 1632070410 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:54:00 CDT / 1632070440 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
+			<!-- 2021-09-19 11:54:30 CDT / 1632070470 --> <row><v>0.0000000000e+00</v><v>0.0000000000e+00</v></row>
 		</database>
 	</rra>
 </rrd>

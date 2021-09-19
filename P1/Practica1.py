@@ -1,44 +1,29 @@
 from datetime import date
 from reportlab.pdfgen import *
 from pysnmp.hlapi import *
+from pysnmp.entity.rfc3413.oneliner import cmdgen
 import threading
 import os
 import rrdtool
 import time
+import sys
+import re
 Agentes=[]
 int_name=[]
 int_status=[]
 stop_threads = False
 threads=False
+Con1=0
+Con2=0
+Con3=0
+Con4=0
+Con5=0
 class Agente:
     def __init__(self, ip, ver, comunidad, puerto):
          self.ip=ip
          self.ver=ver
          self.comunidad=comunidad
          self.puerto=puerto
-def UpdateRRD():
-    while True:
-        if stop_threads:
-            break
-        for i in Agente:
-            #paquetes de la intefaz
-            Con1= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.2.2.1.11.19")
-            #Recibidos IPv4
-            Con2= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.4.3.0")
-            #ICMP echoes
-            Con3= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.5.21.0")
-            #Segmentos Recibidos
-            Con4= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.6.10.0")
-            #Datagramas Entregados UDP
-            Con5= consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.7.1.0")
-            valor= "N:"+str(Con1)+":"+str(Con2)+":"+str(Con3)+":"+str(Con4)+":"+str(Con5)
-            #print (valor)
-            rrdtool.update('traficoRED.rrd', valor)
-            rrdtool.dump('traficoRED.rrd','traficoRED.xml')
-            time.sleep(1)   
-        if ret:
-            print (rrdtool.error())
-            time.sleep(300)
 
 def menu():
     print(30*"-","Menu", 30*"-")
@@ -50,6 +35,7 @@ def menu():
     print("6.-Salir")
 
 def monitor():
+    interf=0
     print(30*"-","Monitor de Dispositivos", 30*"-")
     print("Agentes Monitorizados: ", len(Agentes))
     print(30*"*","Estado de conexion de los agentes", 30*"*")
@@ -63,28 +49,40 @@ def monitor():
         else: 
             print("El agente: ", i.ip ," , Esta conectado") 
     print(30*"*","interfaces de Red de los agentes", 30*"*")
-    for i in Agentes:
-        R = consultaSNMP(i.comunidad,
-                         i.ip,
-                         "1.3.6.1.2.1.2.1")
-        print(30*"=""El agente : ", i.ip, ", tiene ", R, " Interfaces", 30*"=")
+    #for i in Agentes:
+        #R = consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.2.1")
+    #    cmdGen = cmdgen.CommandGenerator()
+    #    errorIndication, errorStatus, errorIndex, R= cmdGen.nextCmd(
+    #        cmdgen.CommunityData(i.comunidad),
+    #        cmdgen.UdpTransportTarget((i.ip, i.puerto)),
+    #        '1.3.6.1.4.1.43.29.4.15.2.1',
+    #    )
+    #print(30*"=","El agente: ", i.ip, ", tiene ", R, " Interfaces", 30*"=")
     #Consulta y guarda la descripcion de las interfaces
-    print(30*"*","Estado y descripcion de interfaces", 30*"*")
+    cmdGen = cmdgen.CommandGenerator()
+    print(30*"=","Estado y descripcion de interfaces", 30*"=")
     for i in Agentes:
-        R2=consultaSNMP(i.comunidad,
-                         i.ip,
-                         "1.3.6.1.2.1.2.2.1.2")
+        cmdGen = cmdgen.CommandGenerator()
+        errorIndication, errorStatus, errorIndex, R2= cmdGen.nextCmd(
+            cmdgen.CommunityData(i.comunidad),
+            cmdgen.UdpTransportTarget((i.ip, i.puerto)),
+            '1.3.6.1.2.1.2.2.1.2',
+        )
+        #R2=consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.2.2.1.2")
         for varBindTableRow in R2:
             for val in varBindTableRow:
                 if 'Null' in val:  # Remove Null interface
                     continue
                 else:
                     int_name.append(val)
-    #Consulta y guarda el estado de las interfaces
+        #Consulta y guarda el estado de las interfaces
         admin=''
-        R3 = consultaSNMP(i.comunidad,
-                         i.ip,
-                         "1.3.6.1.2.1.2.2.1.7")
+        cmdGen = cmdgen.CommandGenerator()
+        errorIndication, errorStatus, errorIndex, R3 = cmdGen.nextCmd(
+        cmdgen.CommunityData(i.comunidad),
+        cmdgen.UdpTransportTarget((i.ip, i.puerto)),
+        '1.3.6.1.2.1.2.2.1.7',)
+        #R3 = consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.2.2.1.7")
         for varBindTableRow in R3:
             for val in varBindTableRow:
                 admin_raw=val.prettyPrint()
@@ -97,6 +95,9 @@ def monitor():
                 int_status.append(admin)
         for j in range(len(int_name)):
             print("{}\t {}\t {}".format(i.ip,int_name[j],int_status[j]))
+            interf+1
+        print(30*"=","El agente: ", i.ip, ", tiene ", len(int_name), " Interfaces", 30*"=")   
+    input("Regresando al menu principal...")
             
 def Calculo():
     print(30*"-","Obtener bloque de ejercicios.", 30*"-")
@@ -109,6 +110,7 @@ def Calculo():
     Res=F1-F0
     Resultado=Res.days%3
     print("El bloque es :", Resultado)
+    input("Regresando al menu principal...")
 
 def AgregarD():
     #windows ip :192.168.1.65
@@ -141,14 +143,18 @@ def CreateRRD():
     ret = rrdtool.create("traficoRED.rrd",
                      "--start",'N',
                      "--step",'30',
-                     "DS:inoctets:COUNTER:600:U:U",
-                     "DS:outoctets:COUNTER:600:U:U",
+                     "DS:PackageInterface:COUNTER:600:U:U",
+                     "DS:IPv4In:COUNTER:600:U:U",
+                     "DS:ICPMechoes:COUNTER:600:U:U",
+                     "DS:InSegments:COUNTER:600:U:U",
+                     "DS:DatagramOut:COUNTER:600:U:U",
                      "RRA:AVERAGE:0.5:6:5",
                      "RRA:AVERAGE:0.5:1:20")
     if ret:
         print (rrdtool.error())
 
 def consultaSNMP(comunidad,host,oid):
+    resultado=""
     errorIndication, errorStatus, errorIndex, varBinds = next(
         getCmd(SnmpEngine(),
                CommunityData(comunidad),
@@ -164,6 +170,31 @@ def consultaSNMP(comunidad,host,oid):
             varB=(' = '.join([x.prettyPrint() for x in varBind]))
             resultado= varB.split()[2]
     return resultado
+
+def UpdateRRD():
+    while True:
+        if stop_threads==True:
+            break  
+        for i in Agentes:
+            #paquetes de la intefaz
+            Con1= int(consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.2.2.1.11.1"))
+            #Recibidos IPv4
+            Con2= int(consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.4.3.0"))
+            #ICMP echoes
+            Con3= int(consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.5.21.0"))
+            #Segmentos Recibidos
+            Con4= int(consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.6.10.0"))
+            #Datagramas Entregados UDP
+            Con5= int(consultaSNMP(i.comunidad,i.ip,"1.3.6.1.2.1.7.1.0"))
+            valor= "N:"+str(Con1)+":"+str(Con2)+":"+str(Con3)+":"+str(Con4)+":"+str(Con5)
+            #print(valor)
+            #error aqui, posiblemente modificar createRRD
+            rrdtool.update('traficoRED.rrd', valor)
+            rrdtool.dump('traficoRED.rrd','traficoRED.xml')
+            time.sleep(1) 
+    if ret:
+        print (rrdtool.error())
+        time.sleep(300)
 
 while True:
     #Windows
@@ -183,13 +214,18 @@ while True:
             time.sleep(5)
             h.join()
             time.sleep(5)
+            stop_threads=False
             CreateRRD()
             h = threading.Thread(target=UpdateRRD)
             h.start()
+            threads=True
+            
         else:
             CreateRRD()
             h = threading.Thread(target=UpdateRRD)
-            h.start()     
+            h.start()
+            threads=True
+
     elif opcion=="4":
         BorrarD()
         if threads==True:
@@ -197,16 +233,25 @@ while True:
             time.sleep(5)
             h.join()
             time.sleep(5)
+            stop_threads=False
             CreateRRD()
             h = threading.Thread(target=UpdateRRD)
             h.start()
+            threads=True
         else:
             CreateRRD()
             h = threading.Thread(target=UpdateRRD)
-            h.start() 
+            h.start()
+            threads=True 
     elif opcion=="5":
         GenerarPDF()
     elif opcion=="6":
-        break
+        if threads==True:
+            stop_threads=True
+            time.sleep(5)
+            h.join()
+            break
+        else:
+            break
     else:
         input("opcion invalida, intenta de nuevo...")
