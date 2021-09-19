@@ -1,17 +1,7 @@
-import threading
-
-def contar():
-    '''Contar hasta cien'''
-    contador = 0
-    while contador<100:
-        contador+=1
-        print('Hilo:', 
-              threading.current_thread().getName(), 
-              'con identificador:', 
-              threading.current_thread().ident,
-              'Contador:', contador)
-
-hilo1 = threading.Thread(target=contar)
-hilo2 = threading.Thread(target=contar)
-hilo1.start()
-hilo2.start()
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+w, h=A4
+c = canvas.Canvas("figuras.pdf", pagesize=A4)
+c.drawImage("Linux.png", 20, h-50,width=50, height=50)
+c.showPage()
+c.save()
