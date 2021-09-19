@@ -1,5 +1,6 @@
 from datetime import date
 from reportlab.pdfgen import *
+from reportlab.lib.pagesizes import A4
 from pysnmp.hlapi import *
 from pysnmp.entity.rfc3413.oneliner import cmdgen
 import threading
@@ -134,13 +135,100 @@ def BorrarD():
         if o.ip == IP:
             del Agentes[i]
         break
+
+def graphRRD(cont,tiempo):
+    tiempo_actual = int(time.time())
+    #Grafica desde el tiempo actual menos diez minutos
+    tiempo_inicial = tiempo_actual - tiempo
+    ret = rrdtool.graph( str(cont)+"-1.png",
+                     "--start",str(tiempo_inicial),
+                     "--end","N",
+                     "--vertical-label=Bytes/s",
+                     "--title=Paquetes de la intefaz",
+                     "DEF:PackageInterface="+str(cont)+".rrd:PackageInterface:AVERAGE",
+                     "AREA:PackageInterface#00FF00:Tráfico de entrada")
+    ret2 = rrdtool.graph( str(cont)+"-2.png",
+                     "--start",str(tiempo_inicial),
+                     "--end","N",
+                     "--vertical-label=Bytes/s",
+                     "--title=Recibidos IPv4",
+                     "DEF:IPv4In="+str(cont)+".rrd:IPv4In:AVERAGE",
+                     "LINE3:IPv4In#0000FF:Tráfico de salida")
+    ret3 = rrdtool.graph( str(cont)+"-3.png",
+                     "--start",str(tiempo_inicial),
+                     "--end","N",
+                     "--vertical-label=Bytes/s",
+                     "--title=ICMP echoes",
+                     "DEF:ICPMechoes="+str(cont)+".rrd:ICPMechoes:AVERAGE",
+                     "AREA:ICPMechoes#00FF00:Tráfico de entrada")
+    ret4 = rrdtool.graph( str(cont)+"-4.png",
+                     "--start",str(tiempo_inicial),
+                     "--end","N",
+                     "--vertical-label=Bytes/s",
+                     "--title=Segmentos Recibidoss",
+                     "DEF:InSegments="+str(cont)+".rrd:InSegments:AVERAGE",
+                     "LINE3:InSegments#0000FF:Tráfico de salida")
+    ret5 = rrdtool.graph( str(cont)+"-5.png",
+                     "--start",str(tiempo_inicial),
+                     "--end","N",
+                     "--vertical-label=Bytes/s",
+                     "--title=Datagramas Entregados UDP",
+                     "DEF:DatagramOut="+str(cont)+".rrd:DatagramOut:AVERAGE",
+                     "AREA:DatagramOut#00FF00:Tráfico de entrada")
         
 def GenerarPDF():
-    arch=canvas.Canvas("Reporte.pdf")
-    arch.save()
+    we,hi =A4
+    print(30*"-","Menu de creacion de pdf", 30*"-")
+    print("Agentes Monitorizados:")
+    for i in Agentes:
+        print("ID: "+i+"--IP: "+i.ip+"--Comunidad: "+i.comunidad)
+    id=int(input("Digita el id del Agente para crear el reporte: "))
+    tiempo=int(input("Digita el tiempo a graficar en segundos:"))
+    for j in Agentes:
+        if j==id:
+            #1.3.6.1.2.1.1.1.0 sistema operativo y sacar la img de ahi 1.3.6.1.2.1.1.6.0ese es el bueno
+            #1.3.6.1.2.1.1.5.0 nombre del sistema 
+            #1.3.6.1.2.1.1.6.0 ubicacion geografica?
+            #1.3.6.1.2.1.1.2.0 version del sistema?seguir buscando
+            #1.3.6.1.2.1.1.3.0 tiempo desde que se reinicio
+            #numero de puerto
+            #Comunidad
+            #Ip
+            Res1 = str(consultaSNMP(j.comunidad,j.ip,"1.3.6.1.2.1.1.1.0"))
+            Res2 = str(consultaSNMP(j.comunidad,j.ip,"1.3.6.1.2.1.1.5.0"))
+            Res3 = str(consultaSNMP(j.comunidad,j.ip,"1.3.6.1.2.1.1.6.0"))
+            Res4 = str(consultaSNMP(j.comunidad,j.ip,"1.3.6.1.2.1.1.2.0"))
+            Res5 = str(consultaSNMP(j.comunidad,j.ip,"1.3.6.1.2.1.1.3.0"))
+            c = canvas.Canvas("Reporte.pdf", pagesize=A4)
+            if Res1 == "Linux":
+                c.drawImage("Linux.png", 20, hi-20, width=50, height=50)
+            else:
+                c.drawImage("Windows.png", 20, hi-20, width=50, height=50)
+            text = c.beginText(50, hi-60)
+            text.textLines("Nombre: "+Res2+"\n"+
+                           "Version: SNMP v"+j.ver+"\n"+
+                           "SO: "+Res1+"\n"+
+                           "Ubicacion: "+Res3+"\n"+
+                           "Puertos: "+j.puerto+"\n"+
+                           "Tiempo de Actividad: "+Res5+"\n"+
+                           "Comunidad: "+j.comunidad+"\n"+
+                           "Ip: "+j.ip+"\n")
+            c.drawText(text)
+            graphRRD(j,tiempo)
+            c.drawImage(str(j)+"-1.png", 50, h - 400, width=400, height=200)
+            c.drawImage(str(j)+"-2.png", 50, h - 600, width=400, height=200)
+            c.showPage()
+            c.drawImage(str(j)+"-3.png", 50, h - 100, width=400, height=200)
+            c.drawImage(str(j)+"-4.png", 50, h - 300, width=400, height=200)
+            c.drawImage(str(j)+"-5.png", 50, h - 500, width=400, height=200)
+            c.showPage()
+            c.save()
+        else:
+            print("Agente no encontrado")
 
 def CreateRRD():
-    ret = rrdtool.create("traficoRED.rrd",
+    for i in Agentes:
+        ret = rrdtool.create(str(i)+".rdd",
                      "--start",'N',
                      "--step",'30',
                      "DS:PackageInterface:COUNTER:600:U:U",
@@ -150,8 +238,8 @@ def CreateRRD():
                      "DS:DatagramOut:COUNTER:600:U:U",
                      "RRA:AVERAGE:0.5:6:5",
                      "RRA:AVERAGE:0.5:1:20")
-    if ret:
-        print (rrdtool.error())
+        if ret:
+            print (rrdtool.error())
 
 def consultaSNMP(comunidad,host,oid):
     resultado=""
@@ -189,8 +277,8 @@ def UpdateRRD():
             valor= "N:"+str(Con1)+":"+str(Con2)+":"+str(Con3)+":"+str(Con4)+":"+str(Con5)
             #print(valor)
             #error aqui, posiblemente modificar createRRD
-            rrdtool.update('traficoRED.rrd', valor)
-            rrdtool.dump('traficoRED.rrd','traficoRED.xml')
+            rrdtool.update(str(i)+".rdd", valor)
+            rrdtool.dump(str(i)+".rdd",str(i)+".rdd")
             time.sleep(1) 
     if ret:
         print (rrdtool.error())
